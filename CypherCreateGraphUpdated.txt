@@ -3,40 +3,26 @@
 
 
 //create unique constraints for event, case and resource ids (perform one by one)
-CREATE CONSTRAINT FOR (e:Event) REQUIRE e.name IS UNIQUE;
-CREATE CONSTRAINT FOR (c:Case) REQUIRE c.name IS UNIQUE;
-CREATE CONSTRAINT FOR (r:Resource) REQUIRE r.name IS UNIQUE;
+CREATE CONSTRAINT constraint_event FOR (e:Event) REQUIRE e.name IS UNIQUE;
+CREATE CONSTRAINT constraint_case FOR (c:Case) REQUIRE c.name IS UNIQUE;
+CREATE CONSTRAINT constraint_resource FOR (r:Resource) REQUIRE r.name IS UNIQUE;
 
 //1 create case nodes with case attributes (Added 31509 labels, created 31509 nodes, set 157545 properties, completed after 15973 ms.)
-:auto LOAD CSV WITH HEADERS FROM "file:///loan_full.csv" as line
-CALL {
-    WITH line
+LOAD CSV WITH HEADERS FROM "file:///loan_full.csv" as line
+WITH line
     MERGE (c:Case {name: line.case, variant: line.variant_index, loangoal: line.LoanGoal, applicationtype: line.ApplicationType, requestedamount: toInteger(line.RequestedAmount)})
-} IN TRANSACTIONS OF 1000 ROWS;
 
 //2 create event nodes with event attributes and relationships to cases (Added 561671 labels, created 561671 nodes, set 6029756 properties, created 561671 relationships, completed after 38875 ms.)
-USING PERIODIC COMMIT 1000
-LOAD CSV WITH HEADERS FROM "file:///loan_full.csv" as line
-WITH line.case as case, 
-	line.EventID as event,  
-	line.EventOrigin as eventClass,
-	line.event as activity,
-	line.Action as action,
-	line.startTime as startTime,	
-	line.completeTime as completeTime,
-	line.OfferID as offer,
-	line.case_index as cIndex,
-	line.offer_index as oIndex,
-	line.application_index as aIndex,
-	line.workflow_index as wIndex,
-    line.sY as sY, line.sD as sD, line.sM as sM, line.sHH as sHH, line.sMM as sMM, line.sSS as sSS, line.sMS as sMS,
-	line.cY as cY, line.cD as cD, line.cM as cM, line.cHH as cHH, line.cMM as cMM, line.cSS as cSS, line.cMS as cMS
-MATCH (c:Case {name: case})
-CREATE (e:Event {name: event, 
-	starttime: localdatetime({year:toInteger(sY), month:toInteger(sM), day:toInteger(sD), hour:toInteger(sHH), minute:toInteger(sMM), second:toInteger(sSS), microsecond:toInteger(sMS)}), 
-	completetime: localdatetime({year:toInteger(cY), month:toInteger(cM), day:toInteger(cD), hour:toInteger(cHH), minute:toInteger(cMM), second:toInteger(cSS), microsecond:toInteger(cMS)}), 
-	activity: activity, class: eventClass, action: action, offerid: offer, caseindex: toInteger(cIndex), offerindex: toInteger(oIndex), applicationindex: toInteger(aIndex), workflowindex: toInteger(wIndex)})
+:auto LOAD CSV WITH HEADERS FROM "file:///loan_full.csv" as line
+CALL {
+WITH line
+MATCH (c:Case {name: line.case})
+CREATE (e:Event {name: line.EventID, 
+	starttime: localdatetime({year:toInteger(line.sY), month:toInteger(line.sM), day:toInteger(line.sD), hour:toInteger(line.sHH), minute:toInteger(line.sMM), second:toInteger(line.sSS), microsecond:toInteger(line.sMS)}), 
+	completetime: localdatetime({year:toInteger(line.cY), month:toInteger(line.cM), day:toInteger(line.cD), hour:toInteger(line.cHH), minute:toInteger(line.cMM), second:toInteger(line.cSS), microsecond:toInteger(line.cMS)}), 
+	activity: line.event, class: line.EventOrigin, action: line.Action, offerid: line.OfferID, caseindex: toInteger(line.case_index), offerindex: toInteger(line.offer_index), applicationindex: toInteger(line.workflow_index), workflowindex: toInteger(line.workflow_index)})
 CREATE (e) -[:EVENT_TO_CASE]-> (c)
+} IN TRANSACTIONS OF 1000 ROWS;
 
 //3 create nodes for each resource and edges to event nodes (Added 145 labels, created 145 nodes, set 145 properties, created 561671 relationships, completed after 17200 ms.)
 USING PERIODIC COMMIT 1000
