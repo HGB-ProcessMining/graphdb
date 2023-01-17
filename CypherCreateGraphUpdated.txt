@@ -25,12 +25,13 @@ CREATE (e) -[:EVENT_TO_CASE]-> (c)
 } IN TRANSACTIONS OF 1000 ROWS;
 
 //3 create nodes for each resource and edges to event nodes (Added 145 labels, created 145 nodes, set 145 properties, created 561671 relationships, completed after 17200 ms.)
-USING PERIODIC COMMIT 1000
-LOAD CSV WITH HEADERS FROM "file:///loan_full.csv" as line
-WITH line.resource as resource, line.EventID as event
-MATCH (e:Event {name: event})
-MERGE (r:Resource {name: resource})
+:auto LOAD CSV WITH HEADERS FROM "file:///loan_full.csv" as line
+CALL {
+WITH line
+MATCH (e:Event {name: line.EventID})
+MERGE (r:Resource {name: line.resource})
 CREATE (r) -[:RESOURCE_TO_EVENT]-> (e)
+} IN TRANSACTIONS OF 1000 ROWS;
 
 
 
@@ -40,22 +41,14 @@ WHERE e2.caseindex - e1.caseindex = 1
 CREATE (e2) -[:DF {timebetween: duration.between(e1.completetime, e2.starttime) }]-> (e1)
 
 //5 create offers, relationships offer -> case (Added 42995 labels, created 42995 nodes, set 257970 properties, created 42995 relationships, completed after 10830 ms.)
-USING PERIODIC COMMIT 1000
-LOAD CSV WITH HEADERS FROM "file:///loan_full.csv" as line
-WITH line.case as case, 
-	line.event as activity,
-	line.RequestedAmount as requestedAmount,
-	line.FirstWithdrawalAmount as firstAmount,
-	line.NumberOfTerms as n_Terms,
-	line.OfferID as offer,
-	line.resource as resource,
-	line.MonthlyCost as monthlyCost,
-	line.CreditScore as creditScore,
-	line.OfferedAmount as offeredAmount
-MATCH(c:Case {name: case}), (r:Resource {name: resource})
-WHERE activity = "O_Created"
-CREATE (o:Offer {name: offer, firstamount: firstAmount, n_terms: n_Terms, monthlycost: monthlyCost, offeredamount: offeredAmount, creditscore: creditScore })
+:auto LOAD CSV WITH HEADERS FROM "file:///loan_full.csv" as line
+CALL {
+WITH line
+MATCH(c:Case {name: line.case}), (r:Resource {name: line.resource})
+WHERE line.event= "O_Created"
+CREATE (o:Offer {name: line.OfferID, firstamount: line.FirstWithdrawalAmount, n_terms: line.NumberOfTerms, monthlycost: line.MonthlyCost, offeredamount: line.OfferedAmount, creditscore: line.CreditScore})
 CREATE (o) -[:OFFER_TO_CASE]-> (c)
+} IN TRANSACTIONS OF 1000 ROWS;
 
 //6 create relationships offer -> event to associate (Offer)events with offers (Created 193849 relationships, completed after 1299 ms.)
 MATCH (e:Event), (o:Offer)
