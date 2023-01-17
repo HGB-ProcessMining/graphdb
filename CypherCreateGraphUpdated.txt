@@ -8,9 +8,11 @@ CREATE CONSTRAINT constraint_case FOR (c:Case) REQUIRE c.name IS UNIQUE;
 CREATE CONSTRAINT constraint_resource FOR (r:Resource) REQUIRE r.name IS UNIQUE;
 
 //1 create case nodes with case attributes (Added 31509 labels, created 31509 nodes, set 157545 properties, completed after 15973 ms.)
-LOAD CSV WITH HEADERS FROM "file:///loan_full.csv" as line
+:auto LOAD CSV WITH HEADERS FROM "file:///loan_full.csv" as line
+CALL {
 WITH line
     MERGE (c:Case {name: line.case, variant: line.variant_index, loangoal: line.LoanGoal, applicationtype: line.ApplicationType, requestedamount: toInteger(line.RequestedAmount)})
+} IN TRANSACTIONS OF 1000 ROWS;
 
 //2 create event nodes with event attributes and relationships to cases (Added 561671 labels, created 561671 nodes, set 6029756 properties, created 561671 relationships, completed after 38875 ms.)
 :auto LOAD CSV WITH HEADERS FROM "file:///loan_full.csv" as line
