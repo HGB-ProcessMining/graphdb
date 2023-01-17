@@ -9,3 +9,5 @@ http://127.0.0.1:7474/browser/
 
 username: neo4j
 password: letmepass
+
+copy the file ```loan_full.csv``` into C:\Users\[YOUR-USERNAME]\neo4j\import
