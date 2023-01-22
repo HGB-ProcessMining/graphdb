@@ -27,9 +27,13 @@ Change the value at ```dbms.memory.transaction.total.max=``` to example ```3g```
 
 ### Neo4j with Docker
 1. Follow the instructions in ```neo4j_docker_setup.md```
-1. For more memory: 
+
 
 ### For both variants:
 1. Open Neo4j Browser and run the commands from the file ```CypherCreateGraphUpdate.txt``` from this github. From the originally version ```CypherCreateGraph.txt``` some commands are deprecadet (like ON, ASSERT, USING PERIODIC COMMIT)
 
+## useful links
+1. Paper "Multi-Dimensional Event Data in Graph Databases" from Stefan Esser and Dirk Fahland: https://link.springer.com/article/10.1007/s13740-021-00122-1
+1. Git from Stefan Esser and Dirk Fahland: https://github.com/multi-dimensional-process-mining/graphdb-eventlogs
+1. prepared data from the students: https://drive.google.com/drive/folders/1kinMug9OzNg5RiwhyfZ5aiF5ksUEAMXI?usp=sharing
 
