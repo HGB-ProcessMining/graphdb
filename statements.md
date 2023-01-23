@@ -85,8 +85,10 @@ RETURN p LIMIT 300 <br>
 <br>
 
 
-MATCH p=()-[dfc:DF_C]-(c:Class)
+MATCH p=()-[dfc:DF_C]-(c:Class) <br>
 WHERE dfc.count > 500 AND ((dfc.connection = "WW" AND dfc.EntityType = "Workflow") OR (dfc.connection = "AA" AND dfc.EntityType = "Application") OR (dfc.connection = "OO" AND dfc.EntityType = "Offer") OR (dfc.connection IN ["AO", "AW", "WO"] AND dfc.EntityType = "Case_AWO" AND dfc.count > 20000))
-RETURN p
+RETURN p <br>
+
+ ![grafik](https://user-images.githubusercontent.com/62024017/214143612-f8d8d8f3-3d44-44d0-aa4b-179adc857d8b.png)
 
 
