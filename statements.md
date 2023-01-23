@@ -22,6 +22,8 @@ RETURN c <br>
 
 ![grafik](https://user-images.githubusercontent.com/62024017/214137760-25b0e866-e9ba-430a-a6b2-0c624e44b132.png)
 
+
+
 MATCH (c:Class) <br>
 WITH DISTINCT c.AWO AS AWO, collect(DISTINCT c) AS class <br>
 CALL apoc.create.addLabels(class, [AWO]) YIELD node <br>
@@ -83,8 +85,41 @@ MATCH p=()-[dfc:DF_C]-(c:Class) <br>
 WHERE dfc.count > 10000 <br>
 RETURN p LIMIT 300 <br>
 <br>
+ 
+MATCH  (e1:Event {activity: "O_Created"})<-[:O_DF]-(e2:Event {activity: "O_Cancelled"}) -[:EVENT_TO_OFFER]-> (o:Offer) -[rel:OFFER_TO_CASE]-> (c:Case)
+WITH  c AS c, count(o) AS ct
+WHERE ct > 1
+MATCH (:Event {activity: "O_Created"})<-[:O_DF]-(e:Event {activity: "O_Cancelled"}) -[:EVENT_TO_OFFER]-> (o:Offer) -[rel:OFFER_TO_CASE]-> (c)
+WITH c AS c, e AS O_Cancelled, o AS o
+MATCH p = (A_Created:Event {activity: "A_Create Application"}) <-[:DF*]-(O_Cancelled:Event {activity: "O_Cancelled"}), (O_Cancelled) -[:EVENT_TO_CASE]-> (c)
+RETURN p,c,o
+![grafik](https://user-images.githubusercontent.com/62024017/214145227-d4682236-2322-4eed-95bd-7d84d6b78043.png)
 
 
+/ Q6
+MATCH (o: Entity {EntityType : "Offer"})<-[:CORR]-(e1:Event {Activity :"O_Created"}) -[df :DF {EntityType: "Offer"}]-> (e2:Event {Activity : "O_Cancelled"})-[:CORR]->(o) <br>
+MATCH (e2)-[:CORR]->(c: Entity {EntityType :"Case_AWO"})<-[:CORR]-(e1)-[:CORR]->(o) <br>
+WITH c , count(o) AS ct <br>
+WHERE ct > 1 <br>
+MATCH (o: Entity {EntityType : "Offer"})<-[:CORR]-(e1:Event {Activity :"O_Created"}) -[df :DF {EntityType: "Offer"}]-> (e2:Event {Activity : "O_Cancelled"})-[:CORR]->(o) <br>
+MATCH (e2)-[:CORR]->(c)<-[:CORR]-(e1)-[:CORR]->(o) <br>
+WITH e2 AS O_Cancelled, c <br>
+MATCH (A_Created:Event {Activity : "A_Create Application"})-[:CORR]->(c)<-[:CORR]-(O_Cancelled:Event {Activity : "O_Cancelled"}) <br>
+MATCH p = (A_Created) -[:DF* {EntityType: "Case_AWO"}]-> (O_Cancelled) <br>
+RETURN p LIMIT 3 <br>
+<br>
+![grafik](https://user-images.githubusercontent.com/62024017/214144238-c1362b56-8374-4935-9582-7cc3e8993715.png)
+
+
+<h5>Hier starke limitierung vor Ausgabe </h5>
+MATCH p=()-[dfc:DF_C]-(c:Class) <br>
+WHERE dfc.count > 1000
+RETURN p LIMIT 300
+
+![grafik](https://user-images.githubusercontent.com/62024017/214144543-5bf42e98-5bbf-454b-a887-c21a87b3fd51.png)
+
+
+<h5>Hier weniger starke limitierung vor Ausgabe; dafür mehr Rules (doppelte Kanten verschwinden) </h5>
 MATCH p=()-[dfc:DF_C]-(c:Class) <br>
 WHERE dfc.count > 500 AND ((dfc.connection = "WW" AND dfc.EntityType = "Workflow") OR (dfc.connection = "AA" AND dfc.EntityType = "Application") OR (dfc.connection = "OO" AND dfc.EntityType = "Offer") OR (dfc.connection IN ["AO", "AW", "WO"] AND dfc.EntityType = "Case_AWO" AND dfc.count > 20000))
 RETURN p <br>
