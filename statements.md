@@ -119,11 +119,19 @@ RETURN p LIMIT 300
 ![grafik](https://user-images.githubusercontent.com/62024017/214144543-5bf42e98-5bbf-454b-a887-c21a87b3fd51.png)
 
 
-<h5>Hier weniger starke limitierung vor Ausgabe; dafür mehr Rules (doppelte Kanten verschwinden) </h5>
+
 MATCH p=()-[dfc:DF_C]-(c:Class) <br>
 WHERE dfc.count > 500 AND ((dfc.connection = "WW" AND dfc.EntityType = "Workflow") OR (dfc.connection = "AA" AND dfc.EntityType = "Application") OR (dfc.connection = "OO" AND dfc.EntityType = "Offer") OR (dfc.connection IN ["AO", "AW", "WO"] AND dfc.EntityType = "Case_AWO" AND dfc.count > 20000))
 RETURN p <br>
 
  ![grafik](https://user-images.githubusercontent.com/62024017/214143612-f8d8d8f3-3d44-44d0-aa4b-179adc857d8b.png)
+ 
+ <h5>Hier weniger starke limitierung vor Ausgabe; dafür mehr Rules (doppelte Kanten verschwinden) </h5>
+ 
+MATCH p=()-[dfc:DF_C]-(c:Class)
+WHERE dfc.count > 500 AND ((dfc.connection = "WW" AND dfc.EntityType = "Workflow") OR (dfc.connection = "AA" AND dfc.EntityType = "Application") OR (dfc.connection = "OO" AND dfc.EntityType = "Offer") OR (dfc.connection IN ["AO", "AW", "WO"] AND dfc.EntityType = "Case_AWO"))
+RETURN p
+
+![grafik](https://user-images.githubusercontent.com/62024017/214146082-8fb264d8-42da-4950-8097-64eae8213942.png)
 
 
