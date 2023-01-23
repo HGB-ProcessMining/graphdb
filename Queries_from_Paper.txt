@@ -1,0 +1,41 @@
+// Q1. Query attributes of events/cases
+MATCH (c: Entity {EntityType : 'Case_AWO'})<-[:CORR]-(e:Event)
+WHERE c.ID = "Application_681547497" AND e.Activity = "A_Submitted"
+RETURN e.timestamp, e.LoanGoal
+
+// NO result:
+// Q2. Query directly-follows relations
+MATCH (o: Entity {EntityType : 'Offer '})<-[:CORR]-(e1:Event)<-[:DF {EntityType: 'Offer'}]- (e2:Event)
+WHERE o.ID = "Offer_716078829" AND e1.Activity = "O_Created"
+RETURN e1, e2
+
+// NO result:
+// Q3. Query eventually-follows relations
+MATCH (o: Entity {EntityType : 'Offer '}) <-[:CORR]- (e1:Event) -[:DF* {EntityType: 'Offer'}]-> (e2:Event)
+WHERE o.ID = "Offer_716078829" AND e1.Activity = "O_Created" AND e2.Activity = "O_Cancelled"
+RETURN e1 , e2
+
+// Q4. Case variants
+MATCH (c: Entity {EntityType : 'Case_AWO'})<-[:CORR]-(e1:Event)-[:DF* {EntityType: 'Case_AWO'}]->(e2:Event)
+WHERE NOT ()-[:DF {EntityType: 'Case_AWO'}]->(e1) AND NOT (e2)-[:DF {EntityType: 'Case_AWO'}]->() AND c .ID = 'Application_681547497'
+RETURN (e1:Event)
+
+// Q5. Query duration/distance between two specific activities
+MATCH (e1:Event)-[:CORR]->(o:Entity {EntityType:'Offer'})<-[:CORR]-(e2:Event)
+WHERE e1.Activity = "O_Created" and e2.Activity = "O_Accepted"
+WITH e1, e2, duration.indays(e1.timestamp, e2.timestamp) AS days , duration.between(e1.timestamp, e2.timestamp) AS time , o
+ORDER BY time DESC
+LIMIT 1
+RETURN e1, e2, days.days as days, time.hours AS hours, time.minutes % 60 as minutes, o;
+
+// Q6. Query for behavior across multi-instance relations
+MATCH (o: Entity {EntityType : "Offer"})<-[:CORR]-(e1:Event {Activity :"O_Created"}) -[df :DF {EntityType: "Offer"}]-> (e2:Event {Activity : "O_Cancelled"})-[:CORR]->(o)
+MATCH (e2)-[:CORR]->(c: Entity {EntityType :"Case_AWO"})<-[:CORR]-(e1)-[:CORR]->(o)
+WITH c , count(o) AS ct
+WHERE ct > 1
+MATCH (o: Entity {EntityType : "Offer"})<-[:CORR]-(e1:Event {Activity :"O_Created"}) -[df :DF {EntityType: "Offer"}]-> (e2:Event {Activity : "O_Cancelled"})-[:CORR]->(o)
+MATCH (e2)-[:CORR]->(c)<-[:CORR]-(e1)-[:CORR]->(o)
+WITH e2 AS O_Cancelled, c
+MATCH (A_Created:Event {Activity : "A_Create Application"})-[:CORR]->(c)<-[:CORR]-(O_Cancelled:Event {Activity : "O_Cancelled"})
+MATCH p = (A_Created) -[:DF* {EntityType: "Case_AWO"}]-> (O_Cancelled)
+RETURN p LIMIT 2;
