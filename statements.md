@@ -86,14 +86,14 @@ WHERE dfc.count > 10000 <br>
 RETURN p LIMIT 300 <br>
 <br>
  
-MATCH  (e1:Event {activity: "O_Created"})<-[:O_DF]-(e2:Event {activity: "O_Cancelled"}) -[:EVENT_TO_OFFER]-> (o:Offer) -[rel:OFFER_TO_CASE]-> (c:Case)
-WITH  c AS c, count(o) AS ct
-WHERE ct > 1
-MATCH (:Event {activity: "O_Created"})<-[:O_DF]-(e:Event {activity: "O_Cancelled"}) -[:EVENT_TO_OFFER]-> (o:Offer) -[rel:OFFER_TO_CASE]-> (c)
-WITH c AS c, e AS O_Cancelled, o AS o
-MATCH p = (A_Created:Event {activity: "A_Create Application"}) <-[:DF*]-(O_Cancelled:Event {activity: "O_Cancelled"}), (O_Cancelled) -[:EVENT_TO_CASE]-> (c)
-RETURN p,c,o
-![grafik](https://user-images.githubusercontent.com/62024017/214145227-d4682236-2322-4eed-95bd-7d84d6b78043.png)
+MATCH  (e1:Event {activity: "O_Created"})<-[:O_DF]-(e2:Event {activity: "O_Cancelled"}) -[:EVENT_TO_OFFER]-> (o:Offer) -[rel:OFFER_TO_CASE]-> (c:Case) <br>
+WITH  c AS c, count(o) AS ct  <br>
+WHERE ct > 1  <br>
+MATCH (:Event {activity: "O_Created"})<-[:O_DF]-(e:Event {activity: "O_Cancelled"}) -[:EVENT_TO_OFFER]-> (o:Offer) -[rel:OFFER_TO_CASE]-> (c) <br>
+WITH c AS c, e AS O_Cancelled, o AS o <br>
+MATCH p = (A_Created:Event {activity: "A_Create Application"}) <-[:DF*]-(O_Cancelled:Event {activity: "O_Cancelled"}), (O_Cancelled) -[:EVENT_TO_CASE]-> (c) <br>
+RETURN p,c,o <br>
+![grafik](https://user-images.githubusercontent.com/62024017/214145227-d4682236-2322-4eed-95bd-7d84d6b78043.png) 
 
 
 / Q6
@@ -113,8 +113,8 @@ RETURN p LIMIT 3 <br>
 
 <h5>Hier starke limitierung vor Ausgabe </h5>
 MATCH p=()-[dfc:DF_C]-(c:Class) <br>
-WHERE dfc.count > 1000
-RETURN p LIMIT 300
+WHERE dfc.count > 1000 <br>
+RETURN p LIMIT 300 <br>
 
 ![grafik](https://user-images.githubusercontent.com/62024017/214144543-5bf42e98-5bbf-454b-a887-c21a87b3fd51.png)
 
@@ -127,10 +127,10 @@ RETURN p <br>
  ![grafik](https://user-images.githubusercontent.com/62024017/214143612-f8d8d8f3-3d44-44d0-aa4b-179adc857d8b.png)
  
  <h5>Hier weniger starke limitierung vor Ausgabe; dafür mehr Rules (doppelte Kanten verschwinden) </h5>
- 
-MATCH p=()-[dfc:DF_C]-(c:Class)
-WHERE dfc.count > 500 AND ((dfc.connection = "WW" AND dfc.EntityType = "Workflow") OR (dfc.connection = "AA" AND dfc.EntityType = "Application") OR (dfc.connection = "OO" AND dfc.EntityType = "Offer") OR (dfc.connection IN ["AO", "AW", "WO"] AND dfc.EntityType = "Case_AWO"))
-RETURN p
+  
+MATCH p=()-[dfc:DF_C]-(c:Class) <br>
+WHERE dfc.count > 500 AND ((dfc.connection = "WW" AND dfc.EntityType = "Workflow") OR (dfc.connection = "AA" AND dfc.EntityType = "Application") OR (dfc.connection = "OO" AND dfc.EntityType = "Offer") OR (dfc.connection IN ["AO", "AW", "WO"] AND dfc.EntityType = "Case_AWO")) <br>
+RETURN p <br>
 
 ![grafik](https://user-images.githubusercontent.com/62024017/214146082-8fb264d8-42da-4950-8097-64eae8213942.png)
 
