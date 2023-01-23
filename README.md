@@ -30,7 +30,9 @@ Change the value at ```dbms.memory.transaction.total.max=``` to example ```20g``
 
 
 ### For both variants:
-1. Open Neo4j Browser and run the commands from the file ```CypherCreateGraphUpdate.txt``` from this github. From the originally version ```CypherCreateGraph.txt``` some commands are deprecadet (like ON, ASSERT, USING PERIODIC COMMIT)
+1. Open Neo4j Browser and run the commands from the file ```CypherCreateGraphUpdate.txt``` from this github. From the originally version ```CypherCreateGraph.txt``` some commands are deprecadet (like ON, ASSERT, USING PERIODIC COMMIT) (deprecated - not the version we work with towards the end)
+2. Open Neo4j Browser and run the commands from the file statements.md.
+
 
 ## useful links
 1. Paper "Multi-Dimensional Event Data in Graph Databases" from Stefan Esser and Dirk Fahland: https://link.springer.com/article/10.1007/s13740-021-00122-1
