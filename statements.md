@@ -45,6 +45,27 @@ MATCH (a:Application)-[dfc:DF_C]->(w:Workflow) <br>
 SET dfc.connection = "AW"; <br>
 MATCH (w:Workflow)-[dfc:DF_C]->(o:Offer) <br>
 SET dfc.connection = "WO"; <br>
+<br>
+MATCH (w1:Workflow)-[dfc:DF_C]->(w2:Workflow) <br>
+CREATE (w1)-[ww:DF_C_WW]->(w2) <br>
+SET ww.EntityType = dfc.EntityType, ww.count = dfc.count <br>
+RETURN w1, dfc, w2, ww LIMIT 30 <br>
+<br>
+![grafik](https://user-images.githubusercontent.com/62024017/214142452-a57c6495-0def-4cb7-bbf7-608371092b71.png)
+<br>
+MATCH (a1:Application)-[dfc:DF_C]->(a2:Application) <br>
+CREATE (a1)-[aa:DF_C_AA]->(a2) <br>
+SET aa.EntityType = dfc.EntityType, aa.count = dfc.count <br>
+RETURN a1, dfc, a2, aa LIMIT 30 <br>
+<br>
+![grafik](https://user-images.githubusercontent.com/62024017/214142722-89c6c9f5-f2bc-4b16-b3c3-58873227c26a.png)
+<br>
+MATCH (o1:Offer)-[dfc:DF_C]->(o2:Offer) <br>
+CREATE (o1)-[oo:DF_C_OO]->(o2) <br>
+SET oo.EntityType = dfc.EntityType, oo.count = dfc.count <br>
+RETURN o1, dfc, o2, oo LIMIT 30 <br>
+<br>
+![grafik](https://user-images.githubusercontent.com/62024017/214142811-fe69bfaa-f11d-4d3c-b8af-99b51e83f6ae.png)
 
 
 
