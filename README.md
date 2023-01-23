@@ -23,7 +23,7 @@ Then work with Neo4j Desktop or with Neo4j with Docker
 1. Open the import folder for the database -> in Neo4j Desktop click on the three dots - Open Folder - Import.
 1. Copy the file loan_full.csv in this folder.
 1. For more memory: click on the three dots at the database - Open Folder - DBMS - open conf folder - open neo4j.conf.
-Change the value at ```dbms.memory.transaction.total.max=``` to example ```3g```, save the file and restart Neo4j.
+Change the value at ```dbms.memory.transaction.total.max=``` to example ```20g```, save the file and restart Neo4j.
 
 ### Neo4j with Docker
 1. Follow the instructions in ```neo4j_docker_setup.md```
