@@ -26,8 +26,7 @@ Then work with Neo4j Desktop or with Neo4j with Docker
 1. Download Neo4j Desktop and create a new database in Neo4j Desktop and start it.
 1. Open the import folder for the database -> in Neo4j Desktop click on the three dots - Open Folder - Import.
 1. Copy the file loan_full.csv in this folder.
-1. For more memory: click on the three dots at the database - Open Folder - DBMS - open conf folder - open neo4j.conf.
-Change the value at ```dbms.memory.heap.max_size=``` to example ```20g```, save the file and restart Neo4j.
+1. For more memory: click on the three dots at the database - Under Settings change the value at ```dbms.memory.heap.max_size=``` to example ```20g```, save the file and restart database.
 
 ### Neo4j with Docker
 
