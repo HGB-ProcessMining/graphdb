@@ -17,13 +17,17 @@ see also https://github.com/multi-dimensional-process-mining/graphdb-eventlogs/t
 
 Then work with Neo4j Desktop or with Neo4j with Docker
 
+### Hardware
+* Prozessor: AMD Ryzen 7 3800X 8-Core Processor     3.90 GHz
+* RAM: 32,0 GB
+
 ### Neo4j Desktop
 
 1. Download Neo4j Desktop and create a new database in Neo4j Desktop and start it.
 1. Open the import folder for the database -> in Neo4j Desktop click on the three dots - Open Folder - Import.
 1. Copy the file loan_full.csv in this folder.
 1. For more memory: click on the three dots at the database - Open Folder - DBMS - open conf folder - open neo4j.conf.
-Change the value at ```dbms.memory.transaction.total.max=``` to example ```20g```, save the file and restart Neo4j.
+Change the value at ```dbms.memory.heap.max_size=``` to example ```20g```, save the file and restart Neo4j.
 
 ### Neo4j with Docker
 
