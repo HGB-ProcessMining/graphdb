@@ -1,4 +1,4 @@
-The files ```bpic17_import.py``` and ``` bpic17_prepare.py``` were taken from the original authors GitHub [repository](https://github.com/multi-dimensional-process-mining/graphdb-eventlogs).
+The files ```bpic17_import.py``` and ``` bpic17_prepare.py``` were taken from the GitHub [repository](https://github.com/multi-dimensional-process-mining/graphdb-eventlogs) of the original authors.
 
 The file ```bpic17_import.py``` was modified to be compatible with neo4j version 5.2.0.
 
@@ -36,4 +36,4 @@ Configurations ```bpic17_import.py```:
 3. Execute ```bpic17_import.py```
 
 ### Need further informations?
-Checkout the original authors GitHub [repository](https://github.com/multi-dimensional-process-mining/graphdb-eventlogs).
+Checkout the GitHub [repository](https://github.com/multi-dimensional-process-mining/graphdb-eventlogs) of the original authors.
