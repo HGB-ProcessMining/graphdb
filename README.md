@@ -34,12 +34,11 @@ Then work with Neo4j Desktop or with Neo4j with Docker
 <br> docker run --name testneo4j -p7474:7474 -p7687:7687 -d -v $HOME/neo4j/data:/data -v $HOME/neo4j/logs:/logs -v $HOME/neo4j/import:/var/lib/neo4j/import -v $HOME/neo4j/plugins:/plugins --env NEO4J_AUTH=neo4j/letmepass --env NEO4J_dbms_connector_https_advertised__address="localhost:7473" --env NEO4J_dbms_connector_http_advertised__address="localhost:7474" --env NEO4J_dbms_connector_bolt_advertised__address="localhost:7687" --env=NEO4J_dbms_memory_heap_max__size=5G neo4j:latest <\br> It might be necessary to add here 20G: --env=NEO4J_dbms_memory_heap_max__size=20G and add: --memory="21g" <\br> in browser http://127.0.0.1:7474/browser/
 - username: neo4j password: letmepass
 2. copy the file loan_full.csv into C:\Users[YOUR-USERNAME]\neo4j\import
-<br>
 
-
-### For both variants:
-1. Open Neo4j Browser and run the commands from the file ```CypherCreateGraphUpdate.txt``` from this github. From the originally version ```CypherCreateGraph.txt``` some commands are deprecadet (like ON, ASSERT, USING PERIODIC COMMIT) (deprecated - not the version we work with towards the end)
-2. Open Neo4j Browser and run the commands from the file ```statements.md```.
+### For execution (tried in Neo4j Desktop):
+1. Follow the steps in ![import/Readme.md](https://github.com/HGB-ProcessMining/graphdb/blob/main/import/readme.md)
+1. For the queries change the setting in Neo4j Browser: Go to settings scroll to the bottom and disable ```Connect result nodes```
+1. Run the ![statements.md](https://github.com/HGB-ProcessMining/graphdb/blob/main/statements.md)
 
 
 ## useful links
