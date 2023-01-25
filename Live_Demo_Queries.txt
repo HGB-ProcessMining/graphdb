@@ -1,0 +1,53 @@
+// Folie 9
+MATCH ()-[dfc:DF_C]-(c:Class)
+WHERE dfc.count > 10000 AND c.Name =~ "O_.*" AND dfc.EntityType = "Offer"
+RETURN c, dfc
+
+// Folie 10
+MATCH (c:Class)
+WHERE c.Name =~ "A_.*"
+RETURN c
+
+// Folie 10 Cont'd
+MATCH (c:Class)-[dfc:DF_C]-(c2:Class)
+WHERE c.AWO IN ["Application", "Offer", "Workflow"]
+RETURN *  LIMIT 10
+
+// Figure 25
+MATCH p=()-[dfc:DF_C]-(c:Class)
+WHERE dfc.count > 500 AND ((dfc.connection = "WW" AND dfc.EntityType = "Workflow") OR (dfc.connection = "AA" AND dfc.EntityType = "Application") OR (dfc.connection = "OO" AND dfc.EntityType = "Offer") OR (dfc.connection IN ["AO", "AW", "WO"] AND dfc.EntityType = "Case_AWO" AND dfc.count > 20000))
+RETURN p 
+
+// Q5. Query duration/distance between two specific activities
+MATCH (e1:Event)-[:CORR]->(o:Entity {EntityType:'Offer'})<-[:CORR]-(e2:Event)
+WHERE e1.Activity = "O_Created" and e2.Activity = "O_Accepted"
+WITH e1, e2, duration.indays(e1.timestamp, e2.timestamp) AS days , duration.between(e1.timestamp, e2.timestamp) AS time , o
+ORDER BY time DESC
+LIMIT 1
+RETURN e1, e2, days.days as days, time.hours AS hours, time.minutes % 60 as minutes, o;
+
+// Q6. Query for behavior across multi-instance relations
+MATCH (o: Entity {EntityType : "Offer"})<-[:CORR]-(e1:Event {Activity :"O_Created"}) -[df :DF {EntityType: "Offer"}]-> (e2:Event {Activity : "O_Cancelled"})-[:CORR]->(o)
+MATCH (e2)-[:CORR]->(c: Entity {EntityType :"Case_AWO"})<-[:CORR]-(e1)-[:CORR]->(o)
+WITH c , count(o) AS ct
+WHERE ct > 1
+MATCH (o: Entity {EntityType : "Offer"})<-[:CORR]-(e1:Event {Activity :"O_Created"}) -[df :DF {EntityType: "Offer"}]-> (e2:Event {Activity : "O_Cancelled"})-[:CORR]->(o)
+MATCH (e2)-[:CORR]->(c)<-[:CORR]-(e1)-[:CORR]->(o)
+WITH e2 AS O_Cancelled, c
+MATCH (A_Created:Event {Activity : "A_Create Application"})-[:CORR]->(c)<-[:CORR]-(O_Cancelled:Event {Activity : "O_Cancelled"})
+MATCH p = (A_Created) -[:DF* {EntityType: "Case_AWO"}]-> (O_Cancelled)
+RETURN p LIMIT 2;
+
+
+
+
+// doesn't work
+MATCH g=(a1:Class)-[dfc:DF_C]-(a2:Class)
+WHERE dfc.count > 500 AND a1.AWO <> a2.AWO AND dfc.EntityType = "Case_AWO"
+MATCH a=()-[dfca:DF_C_AA]-()
+WHERE dfca.count > 500 AND dfca.EntityType = "Application"
+MATCH o=()-[dfco:DF_C_OO]-()
+WHERE dfco.count > 500 AND dfco.EntityType = "Offer"
+MATCH w=()-[dfcw:DF_C_WW]-()
+WHERE dfcw.count > 500 AND dfcw.EntityType = "Workflow"
+RETURN g, a, o, w
